@@ -7,16 +7,12 @@
           <i class="fas fa-times"></i>
         </button>
         <div class="media-container">
-          <!-- Zeige das Video, solange noch kein Bild eingefangen wurde -->
           <video v-if="!capturedImage" ref="video" autoplay></video>
-          <!-- Gefangenes Standbild -->
           <img v-else :src="capturedImage" alt="Captured" class="captured-image" />
-          <!-- Lade-Indikator, wenn die Response noch aussteht -->
           <div v-if="loading" class="loading-overlay">
             <div class="spinner"></div>
           </div>
         </div>
-        <!-- Button nur anzeigen, wenn noch kein Bild eingefangen wurde -->
         <div class="buttons" v-if="!capturedImage">
           <button @click="capturePhoto">
             <q-icon name="photo_camera" size="md" />
@@ -28,15 +24,15 @@
 </template>
 
 <script>
-import { useMyStore } from '../stores/myStore.js'; // ggf. Pfad anpassen
+import { useMyStore } from '../stores/myStore.js';
 
 export default {
   data() {
     return {
       showCameraDialog: true,
       stream: null,
-      capturedImage: null, // Hier wird das eingefrorene Bild gespeichert
-      loading: false // Steuert die Anzeige des Lade-Spinners
+      capturedImage: null,
+      loading: false
     };
   },
   methods: {
@@ -50,20 +46,15 @@ export default {
       }
     },
     capturePhoto() {
-      // Erstelle ein Canvas-Element, um einen Schnappschuss zu machen
       const canvas = document.createElement('canvas');
       canvas.width = this.$refs.video.videoWidth;
       canvas.height = this.$refs.video.videoHeight;
       const context = canvas.getContext('2d');
       context.drawImage(this.$refs.video, 0, 0, canvas.width, canvas.height);
 
-      // Bild als Standbild festhalten (DataURL wird im Template als <img> angezeigt)
       this.capturedImage = canvas.toDataURL('image/jpeg');
-
-      // Ladeanzeige einblenden
       this.loading = true;
 
-      // Konvertiere Canvas zu Blob und starte die asynchrone Verarbeitung
       canvas.toBlob(async (blob) => {
         if (!blob) {
           console.error("Kein Blob erstellt");
@@ -74,23 +65,22 @@ export default {
           const store = useMyStore();
           const response = await store.extractBillbox(file);
           console.log("Billbox extrahiert:", response);
-          // Ladeanzeige ausblenden
           this.loading = false;
-          // Zeige grünen Erfolgshinweis – hier wird Quasar Notify genutzt,
-          // falls du Quasar nicht einsetzt, ersetze diesen Teil durch eine eigene Implementierung
           this.$q.notify({
             type: 'positive',
             message: 'Erfolgreich eingelesen!',
             position: 'top'
           });
-          // Schließe den Kamera-Dialog
           this.closeCamera();
         } catch (error) {
           console.error("Fehler beim Scannen der Billbox:", error);
           this.loading = false;
-          alert("Fehler beim Scannen der Billbox.");
-          // Setze das Standbild zurück, um ggf. einen erneuten Scan zu ermöglichen
-          this.capturedImage = null;
+          this.$q.notify({
+            type: 'negative',
+            message: 'Einscannen fehlgeschlagen!',
+            position: 'top'
+          });
+          this.closeCamera(); // Kamera wird jetzt bei Fehler auch geschlossen
         }
       }, 'image/jpeg');
     },
@@ -99,14 +89,8 @@ export default {
         this.stream.getTracks().forEach((track) => track.stop());
       }
 
-        // Hole den Store und lade die Transaktionen neu
-  const store = useMyStore();
-  store.fetchUserTransactions(); // Hier werden die Transaktionen neu abgefragt
-  
-  // Optional: Weitere Daten (wie Benutzer-Details oder Kategorien) können hier ebenfalls neu geladen werden:
-  // store.fetchUserById();
-  // store.fetchUserCategories();
-  
+      const store = useMyStore();
+      store.fetchUserTransactions();
       this.showCameraDialog = false;
       this.$emit('close');
     },
@@ -163,7 +147,6 @@ video,
   justify-content: center;
 }
 
-/* Einfacher CSS-Spinner */
 .spinner {
   border: 8px solid #f3f3f3;
   border-top: 8px solid #090071;

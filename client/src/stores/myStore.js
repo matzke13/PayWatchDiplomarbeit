@@ -12,13 +12,13 @@ export const useMyStore = defineStore('myStore', () => {
   const userDetail = ref(null);
   const userCategories = ref([]);
   const transactions = ref([]);
-
+  const url = import.meta.env.VITE_URL;
   const router = useRouter();
 
   // Methode zum Login mit Google
   const loginWithGoogle = async () => {
     try {
-      const response = await fetch('http://localhost:3000/auth/login', {
+      const response = await fetch(url+'/auth/login', {
         method: 'POST',
       });
       const data = await response.json();
@@ -66,7 +66,7 @@ export const useMyStore = defineStore('myStore', () => {
     try {
       console.log('Access Token beim Abrufen der Benutzerdaten:', accessToken.value);
   
-      const response = await fetch('http://localhost:3000/auth/me', {
+      const response = await fetch(url+'/auth/me', {
         headers: {
           Authorization: `Bearer ${accessToken.value}`,
           'Cache-Control': 'no-cache',
@@ -90,7 +90,7 @@ export const useMyStore = defineStore('myStore', () => {
   // Alle Benutzer abrufen
   const fetchUsers = async () => {
     try {
-      const response = await axios.get('http://localhost:3000/users', {
+      const response = await axios.get(url+'/users', {
         headers: {
           Authorization: `Bearer ${accessToken.value}`,
         },
@@ -105,7 +105,7 @@ export const useMyStore = defineStore('myStore', () => {
   // Einzelnen Benutzer per ID abrufen
   const fetchUserById = async () => {
     try {
-      const response = await axios.get(`http://localhost:3000/auth/user/${userData.value?.id}`, {
+      const response = await axios.get(url+`/auth/user/${userData.value?.id}`, {
         headers: {
           Authorization: `Bearer ${accessToken.value}`,
         },
@@ -125,7 +125,7 @@ export const useMyStore = defineStore('myStore', () => {
         console.error('User-ID nicht gefunden');
         return;
       }
-      const response = await axios.get(`http://localhost:3000/users/categories/${userId}`, {
+      const response = await axios.get(url+`/users/categories/${userId}`, {
         headers: {
           Authorization: `Bearer ${accessToken.value}`,
         },
@@ -146,7 +146,7 @@ export const useMyStore = defineStore('myStore', () => {
       };
 
       const response = await axios.post(
-        'http://localhost:3000/users/categories',
+        url+'/users/categories',
         payload,
         {
           headers: {
@@ -174,7 +174,7 @@ export const useMyStore = defineStore('myStore', () => {
       };
 
       const response = await axios.post(
-        'http://localhost:3000/users/transactions',
+        url+'/users/transactions',
         dataWithUserId,
         {
           headers: {
@@ -197,7 +197,7 @@ export const useMyStore = defineStore('myStore', () => {
     await fetchUserById();
     try {
       const userId = userData.value?.id;
-      const response = await axios.get(`http://localhost:3000/users/transactions/${userId}`, {
+      const response = await axios.get(url+`/users/transactions/${userId}`, {
         headers: {
           Authorization: `Bearer ${accessToken.value}`,
         },
@@ -213,7 +213,7 @@ export const useMyStore = defineStore('myStore', () => {
   const logout = async () => {
     try {
       if (accessToken.value) {
-        const response = await fetch('http://localhost:3000/auth/logout', {
+        const response = await fetch(url+'/auth/logout', {
           method: 'POST',
           headers: {
             Authorization: `Bearer ${accessToken.value}`,
@@ -242,7 +242,7 @@ export const useMyStore = defineStore('myStore', () => {
   // Geschützte Inhalte abrufen (optional)
   const getProtectedContent = async () => {
     try {
-      const response = await fetch('http://localhost:3000/protected', {
+      const response = await fetch(url+'/protected', {
         headers: {
           Authorization: `Bearer ${accessToken.value}`,
         },
@@ -266,7 +266,7 @@ export const useMyStore = defineStore('myStore', () => {
     await fetchUserById();
     try {
       const userId = userData.value?.id;
-      const response = await axios.delete(`http://localhost:3000/users/${userId}`, {
+      const response = await axios.delete(url+`/users/${userId}`, {
         headers: {
           Authorization: `Bearer ${accessToken.value}`,
         },
@@ -282,7 +282,7 @@ export const useMyStore = defineStore('myStore', () => {
   // Kategorie löschen
   const deleteCategory = async (categoryId) => {
     try {
-      const response = await axios.delete(`http://localhost:3000/users/categories/${categoryId}`, {
+      const response = await axios.delete(url+`/users/categories/${categoryId}`, {
         headers: {
           Authorization: `Bearer ${accessToken.value}`,
         },
@@ -306,7 +306,7 @@ export const useMyStore = defineStore('myStore', () => {
       formData.append('file', file);
       const userId = userData.value?.id;
       const response = await axios.post(
-        'http://localhost:3000/billbox/full-process/' + userId,
+        url+'/billbox/full-process/' + userId,
         formData,
         {
           headers: {
