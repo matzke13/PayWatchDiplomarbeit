@@ -1,0 +1,124 @@
+GET http://localhost:3000/users
+###
+### Test: Benutzer mit userId abrufen
+GET http://localhost:3000/auth/user/102e88c7-e59c-49d4-853d-04e5b4a86b94
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsImtpZCI6IlAyNU5ZUTBLWndCdW43YUQiLCJ0eXAiOiJKV1QifQ.eyJpc3MiOiJodHRwczovL3hlaXFrcWJhZHhydWZ5ZmlyYm92LnN1cGFiYXNlLmNvL2F1dGgvdjEiLCJzdWIiOiIxMDJlODhjNy1lNTljLTQ5ZDQtODUzZC0wNGU1YjRhODZiOTQiLCJhdWQiOiJhdXRoZW50aWNhdGVkIiwiZXhwIjoxNzM5MjA5MzYwLCJpYXQiOjE3MzkyMDU3NjAsImVtYWlsIjoicHJpdHoubDIwQGh0bHdpZW53ZXN0LmF0IiwicGhvbmUiOiIiLCJhcHBfbWV0YWRhdGEiOnsicHJvdmlkZXIiOiJnb29nbGUiLCJwcm92aWRlcnMiOlsiZ29vZ2xlIl19LCJ1c2VyX21ldGFkYXRhIjp7ImF2YXRhcl91cmwiOiJodHRwczovL2xoMy5nb29nbGV1c2VyY29udGVudC5jb20vYS9BQ2c4b2NKNkV2OEJMTXpaYUlEQThiQ1U1SlRCUDBGUTk5aElLWG5kM2hSemxIZkFZMGFWejNRPXM5Ni1jIiwiY3VzdG9tX2NsYWltcyI6eyJoZCI6Imh0bHdpZW53ZXN0LmF0In0sImVtYWlsIjoicHJpdHoubDIwQGh0bHdpZW53ZXN0LmF0IiwiZW1haWxfdmVyaWZpZWQiOnRydWUsImZ1bGxfbmFtZSI6IkxlbyBQcml0eiIsImlzcyI6Imh0dHBzOi8vYWNjb3VudHMuZ29vZ2xlLmNvbSIsIm5hbWUiOiJMZW8gUHJpdHoiLCJwaG9uZV92ZXJpZmllZCI6ZmFsc2UsInBpY3R1cmUiOiJodHRwczovL2xoMy5nb29nbGV1c2VyY29udGVudC5jb20vYS9BQ2c4b2NKNkV2OEJMTXpaYUlEQThiQ1U1SlRCUDBGUTk5aElLWG5kM2hSemxIZkFZMGFWejNRPXM5Ni1jIiwicHJvdmlkZXJfaWQiOiIxMDQ0MjIyNjU1Mjc4MTUzODk0NTgiLCJzdWIiOiIxMDQ0MjIyNjU1Mjc4MTUzODk0NTgifSwicm9sZSI6ImF1dGhlbnRpY2F0ZWQiLCJhYWwiOiJhYWwxIiwiYW1yIjpbeyJtZXRob2QiOiJvYXV0aCIsInRpbWVzdGFtcCI6MTczOTIwNTc2MH1dLCJzZXNzaW9uX2lkIjoiNzY3MTcwMGMtOWY5MC00NWNkLTljZGEtODMzM2IyMTExYjZlIiwiaXNfYW5vbnltb3VzIjpmYWxzZX0.t3JmPShnZwzvZ2VVYe9VUSsywp4QJl3L3UfrKrATzro
+###
+POST http://localhost:3000/users/categories
+Content-Type: application/json
+
+{
+  "userId": "9ca72277-90c6-422c-8275-f47b5c4a22c3",
+  "name": "Meine Kategorie1",
+  "color": "#FF573F"
+}
+###
+POST http://localhost:3000/users/transactions
+Content-Type: application/json
+
+{
+  "created_at": "2025-04-02T10:30:00Z",
+  "user_id": "bcf17674-38c4-432e-a657-09f2349de48d",
+  "value": -213,
+  "description": "Salary for December",
+  "category_id": "14"
+}
+###
+DELETE http://localhost:3000/users/d2cbaee9-0bbc-450e-8761-8e0f63365d3c
+###
+GET http://localhost:3000/users/categories/d29fda6b-4eb1-47fe-a86a-bfeeae2941fa
+###
+
+GET http://localhost:3000/users/transactions/9ca72277-90c6-422c-8275-f47b5c4a22c3
+###
+DELETE http://localhost:3000/users/transactions/95
+###
+DELETE http://localhost:3000/users/categories/36
+### RECURRING TRANSACTIONS
+### GET alle wiederkehrenden Transaktionen
+GET http://localhost:3000/recTrans/all
+Content-Type: application/json
+### GET wiederkehrende Transaktionen für einen Benutzer
+GET http://localhost:3000/recTrans/user/9ca72277-90c6-422c-8275-f47b5c4a22c3
+Content-Type: application/json
+### DELETE eine wiederkehrende Transaktion
+DELETE http://localhost:3000/recTrans/123e4567-e89b-12d3-a456-426614174000
+Content-Type: application/json
+### POST: Erstelle eine neue wiederkehrende Transaktion für einen Benutzer
+POST http://localhost:3000/recTrans/9ca72277-90c6-422c-8275-f47b5c4a22c3
+Content-Type: application/json
+
+{
+  "amount": 100,
+  "frequency": "monthly",
+  "last_run": "2024-12-01T00:00:00Z"
+}
+### POST: Verarbeite alle fälligen wiederkehrenden Transaktionen      ROUTE JEDES MAL VOR LOGIN IN ODER BEIM LOGIN STARTEN (check welche wiederkehrenden Transaktionen noch offen sind)
+POST http://localhost:3000/recTrans/process
+Content-Type: application/json
+### BUDGET ROUTEN
+### GET: Budget, Verbrauch und overBudget-Status für eine bestimmte Kategorie eines Benutzers (Das letzte ist die kategorie id)
+GET http://localhost:3000/budget/9ca72277-90c6-422c-8275-f47b5c4a22c3/15
+Content-Type: application/json
+### POST: Erstelle ein neues Budget für eine bestimmte Kategorie eines Benutzers (Das letzte ist die kategorie id)
+POST http://localhost:3000/budget/9ca72277-90c6-422c-8275-f47b5c4a22c3/15
+Content-Type: application/json
+
+{
+  "budget_amount": 500,
+  "period_start": "2025-01-01T00:00:00Z",
+  "period_end": "2025-03-31T23:59:59Z",
+  "description": "Budget für Lebensmittel"
+}
+### GET: Abrufen des bisherigen Verbrauchs für eine Kategorie eines Benutzers
+GET http://localhost:3000/budget/bcf17674-38c4-432e-a657-09f2349de48d/14/consumption
+Content-Type: application/json
+
+
+
+### ----------------------------------------------------- AB HIER BILLBOX (OCR) -------------------------------------------------------------------------------------------------
+
+
+POST http://localhost:3000/billbox/extract
+Content-Type: multipart/form-data; boundary=----FormBoundary
+
+------FormBoundary
+Content-Disposition: form-data; name="file"; filename="test.jpg"
+Content-Type: image/jpeg
+
+< ./test.jpg
+------FormBoundary--
+### WEITERE
+POST http://localhost:3000/billbox/logic
+Content-Type: application/json
+
+{
+  "text": "Apotheke zur Universität KG\n1090 Wien, Universitätsstraße 10\nTel. : 01/402 52 98\nbestellung@unjapotheke.at\nFirmenbuch: FN 550125h, Wien\nATU76462338\nRECHNUNG\nKDE-187153\n02.01.2025 14:09\nDispensant: 09\nKassa: 2\nMag. pharm. Alexandra Wallner\nATOMOXETIN STA HKPS 25MG 7ST\n7,10R\nATOMOXETIN STA HKPS 25MG 7ST\n0,00R\n-1 X 0,00\n(Einlösung - Abholnummer: A055516)\nATOMOXETIN STA HKPS 40MG\n7,10R\n28ST\nATOMOXETIN STA HKPS 40MG\n0,00 R\n28ST\n-1 X 0,00\n(Einlösung - Abholnummer: A055517)\nRechnungsbetrag EUR:\n14,20\nRezeptgebühren/Kostenanteile\n14,20\nBezahlt (Bar) EUR:\n100,00\nRetour EUR:\n85,80\nKundennr. 211427\nWir beraten Sie gerne!\nwww.uniapotheke.at\nID 20940022\navs1\nA2EFC0#187561\n02.01.2025 14:09:34"
+}
+### FULL PROCESS --------------------------------------------------------
+POST http://localhost:3000/billbox/full-process/9ca72277-90c6-422c-8275-f47b5c4a22c3
+Content-Type: multipart/form-data; boundary=----FormBoundary
+
+------FormBoundary
+Content-Disposition: form-data; name="file"; filename="test2.jpg"
+Content-Type: image/jpeg
+
+< ./test2.jpg
+------FormBoundary--
+###
+GET http://localhost:3000/billbox/data
+###
+DELETE http://localhost:3000/billbox/receipts/20
+###
+PATCH http://localhost:3000/billbox/receipts/21
+Content-Type: application/json
+
+{
+  "date": "2024-02-08",
+  "store": "NTEE",
+  "total": 99.99
+}
+###
+GET http://localhost:3000/billbox/receipts/user/0474d640-a73a-4477-aafc-ca1f979218b4
+
+###
